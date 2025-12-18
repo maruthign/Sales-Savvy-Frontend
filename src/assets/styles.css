@@ -1,13 +1,18 @@
+/* ---------- THEME ---------- */
 :root {
-  --primary: #ffc107;
-  --primary-dark: #e0a800;
+  --primary: #004E64;
+  --primary-dark: #00394a;
+  --primary-light: #0a6c88;
   --bg-light: #ffffff;
-  --bg-muted: #f9f9f9;
-  --text-dark: #000000;
-  --text-grey: #666666;
-  --border: #dddddd;
+  --bg-muted: #f4f7f8;
+  --text-dark: #0b1f2a;
+  --text-grey: #5f6f76;
+  --border: #d6dde1;
+  --error: #cf1322;
+  --success: #389e0d;
 }
 
+/* ---------- RESET ---------- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -15,79 +20,132 @@
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* Base Layout (Desktop) */
-.app-container {
+body {
+  background: var(--bg-muted);
+  min-height: 100vh;
+}
+
+/* ---------- LAYOUT ---------- */
+.auth-container {
   display: flex;
   min-height: 100vh;
   width: 100%;
 }
 
-/* --- Branding Aside (Desktop/Tablet Only) --- */
-.brand-aside {
+/* ---------- BRAND PANEL ---------- */
+.auth-brand {
   flex: 1;
-  background-color: var(--primary);
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--primary-light)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 40px;
-  /* Figma Wave Pattern Overlay */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23000' fill-opacity='0.05' d='M0,160L60,144C120,128,240,96,360,117.3C480,139,600,213,720,224C840,235,960,181,1080,149.3C1200,117,1320,107,1380,101.3L1440,96L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
-  background-size: cover;
 }
 
-.brand-content { text-align: left; max-width: 350px; color: var(--text-dark); }
-.brand-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-.fire-icon { font-size: 2.5rem; }
-.brand-logo h1 { font-size: 2.8rem; font-weight: 900; }
-.brand-content p { font-size: 1.1rem; opacity: 0.8; line-height: 1.5; }
+.brand-box {
+  max-width: 360px;
+  color: #ffffff;
+}
 
-/* --- Form Section --- */
-.form-section {
+.brand-box h1 {
+  font-size: 2.6rem;
+  font-weight: 900;
+}
+
+.brand-box p {
+  margin-top: 12px;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* ---------- FORM SECTION ---------- */
+.auth-form-section {
   flex: 1.2;
-  background-color: var(--bg-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
 
-.form-card {
+.auth-card {
   width: 100%;
-  max-width: 480px;
+  max-width: 460px;
   background: var(--bg-light);
   padding: 40px;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0, 78, 100, 0.15);
 }
 
-.form-header h2 { font-size: 2rem; color: var(--text-dark); margin-bottom: 8px; }
-.form-header p { color: var(--text-grey); margin-bottom: 30px; }
+/* ---------- HEADER ---------- */
+.auth-header h2 {
+  font-size: 2rem;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
 
-/* --- Inputs (Visibility Fixed) --- */
-.input-field { margin-bottom: 24px; display: flex; flex-direction: column; }
-.input-field label {
+.auth-header p {
+  color: var(--text-grey);
+  margin-bottom: 28px;
+}
+
+/* ---------- STATUS ---------- */
+.status-msg {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.status-msg.error {
+  background: #fff1f0;
+  color: var(--error);
+  border: 1px solid #ffa39e;
+}
+
+.status-msg.success {
+  background: #f6ffed;
+  color: var(--success);
+  border: 1px solid #b7eb8f;
+}
+
+/* ---------- INPUTS ---------- */
+.input-group {
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
   font-size: 0.85rem;
   font-weight: 700;
-  text-transform: uppercase;
   margin-bottom: 8px;
   color: var(--text-dark);
 }
 
-.input-field input, .input-field select {
+.input-group input,
+.input-group select {
   padding: 12px 0;
   font-size: 1rem;
   border: none;
   border-bottom: 2px solid var(--border);
   background: transparent;
-  color: var(--text-dark) !important; /* Forces black text when typing */
+  color: var(--text-dark);
   transition: border-color 0.2s;
 }
 
-.input-field input::placeholder { color: #aaa; }
-.input-field input:focus { outline: none; border-bottom-color: var(--primary); }
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-bottom-color: var(--primary);
+}
 
-/* --- Button --- */
-.submit-btn {
+/* ---------- BUTTON ---------- */
+.auth-btn {
   width: 100%;
   padding: 16px;
   background: var(--primary);
@@ -95,49 +153,48 @@
   border-radius: 8px;
   font-weight: 800;
   font-size: 1rem;
-  text-transform: uppercase;
+  color: #ffffff;
   cursor: pointer;
-  margin-top: 10px;
   transition: background 0.2s, transform 0.1s;
 }
 
-.submit-btn:hover { background: var(--primary-dark); }
-.submit-btn:active { transform: scale(0.98); }
-
-.card-footer { text-align: center; margin-top: 25px; color: var(--text-grey); }
-.card-footer a { color: var(--primary-dark); font-weight: 700; text-decoration: none; }
-
-/* --- Status Messages --- */
-.status-msg { padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; font-size: 0.9rem; }
-.status-msg.error { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; }
-.status-msg.success { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; }
-
-/* --- RESPONSIVE MEDIA QUERIES --- */
-
-/* Tablet View (Max 1024px) */
-@media screen and (max-width: 1024px) {
-  .brand-logo h1 { font-size: 2.2rem; }
-  .form-card { padding: 30px; }
+.auth-btn:hover {
+  background: var(--primary-dark);
 }
 
-/* Mobile View (Max 768px) */
-@media screen and (max-width: 768px) {
-  .app-container { flex-direction: column; }
-  
-  .brand-aside {
-    display: none; /* Hides the side banner on mobile for a cleaner look */
+.auth-btn:active {
+  transform: scale(0.98);
+}
+
+/* ---------- FOOTER ---------- */
+.auth-footer {
+  margin-top: 25px;
+  text-align: center;
+  color: var(--text-grey);
+}
+
+.auth-footer a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column;
   }
 
-  .form-section {
-    background-color: var(--bg-light); /* Clean white background for mobile */
+  .auth-brand {
+    display: none;
+  }
+
+  .auth-card {
+    box-shadow: none;
     padding: 20px;
   }
-
-  .form-card {
-    box-shadow: none; /* Flat design for mobile */
-    padding: 10px;
-    max-width: 100%;
-  }
-
-  .form-header h2 { font-size: 1.8rem; }
 }
