@@ -4,7 +4,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import RegistrationPage from "./RegistrationPage";
 import LoginPage from "./LoginPage";
-// import CustomerHomePage from "./CustomerHomePage";
+import CustomerHomePage from "./componenets/CustomerHomePage";
 // import CartPage from "./CartPage";
 // import OrderPage from "./OrderPage";
 // import AdminLogin from "./AdminLogin";
@@ -14,7 +14,9 @@ const AppRoutes = () => {
     return (
         <Routes>
             <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegistrationPage />} />
+            <Route path="/customerhome" element={<CustomerHomePage />} />
         </Routes>
     );
 };
