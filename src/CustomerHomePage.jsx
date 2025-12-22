@@ -1,73 +1,59 @@
 import React, { useState, useEffect } from 'react';
+import { CategoryNavigation } from './CategoryNavigation';
 import { ProductList } from './ProductList';
 import { Footer } from './Footer';
 import { Header } from './Header';
-import '../assets/styles.css';
-
-// API URL - Update this to match your backend
-const API_URL = 'http://localhost:8080';
+import './assets/styles.css';
 
 export default function CustomerHomePage() {
   const [products, setProducts] = useState([]);
   const [cartCount, setCartCount] = useState(0);
   const [username, setUsername] = useState('');
-  const [cartError, setCartError] = useState(false);
-  const [isCartLoading, setIsCartLoading] = useState(true);
-  const [isProductsLoading, setIsProductsLoading] = useState(true);
+  const [cartError, setCartError] = useState(false); // State for cart fetch error
+  const [isCartLoading, setIsCartLoading] = useState(true); // State for cart loading
 
-  // Fetch products once on mount with default category
-  useEffect(() => {
-    fetchProducts('Shirts');
-  }, []);
 
-  // Fetch cart count whenever username changes
   useEffect(() => {
+    fetchProducts();
     if (username) {
-      fetchCartCount();
+      fetchCartCount(); // Fetch cart count only if username is available
     }
-  }, [username]);
+  }, [username]); // Re-run cart count fetch if username changes
 
   const fetchProducts = async (category = '') => {
-    setIsProductsLoading(true);
     try {
       const response = await fetch(
-        `${API_URL}/api/products${category ? `?category=${category}` : ''}`, 
-        { credentials: 'include' }
+        `http://localhost:8080/api/products${category ? `?category=${category}` : '?category=Shirts'}`,
+        { credentials: 'include' } // Include authToken as a cookie
       );
       const data = await response.json();
-      
       if (data) {
-        // Only set username once to avoid infinite loops
-        if (data.user?.name && !username) {
-          setUsername(data.user.name);
-        }
+        setUsername(data.user?.name || 'Guest'); // Extract username
         setProducts(data.products || []);
       } else {
         setProducts([]);
+
       }
     } catch (error) {
       console.error('Error fetching products:', error);
       setProducts([]);
-    } finally {
-      setIsProductsLoading(false);
     }
   };
 
   const fetchCartCount = async () => {
-    setIsCartLoading(true);
+    setIsCartLoading(true); // Set loading state
     try {
-      const response = await fetch(
-        `${API_URL}/api/cart/items/count?username=${username}`, 
-        { credentials: 'include' }
-      );
+      const response = await fetch(`http://localhost:8080/api/cart/items/count?username=${username}`, {
+        credentials: 'include', // Include authToken as a cookie
+      });
       const count = await response.json();
       setCartCount(count);
-      setCartError(false);
+      setCartError(false); // Reset error state if successful
     } catch (error) {
       console.error('Error fetching cart count:', error);
-      setCartError(true);
+      setCartError(true); // Set error state
     } finally {
-      setIsCartLoading(false);
+      setIsCartLoading(false); // Remove loading state
     }
   };
 
@@ -80,17 +66,17 @@ export default function CustomerHomePage() {
       console.error('Username is required to add items to the cart');
       return;
     }
-    
     try {
-      const response = await fetch(`${API_URL}/api/cart/add`, {
+      const response = await fetch('http://localhost:8080/api/cart/add', {
         credentials: 'include',
         method: 'POST',
-        body: JSON.stringify({ username, productId }),
+        body: JSON.stringify({ username, productId }), // Include username and productId in the request
         headers: { 'Content-Type': 'application/json' },
+        // Include authToken as a cookie
       });
 
       if (response.ok) {
-        fetchCartCount();
+        fetchCartCount(); // Update cart count
       } else {
         console.error('Failed to add product to cart');
       }
@@ -102,16 +88,14 @@ export default function CustomerHomePage() {
   return (
     <div className="customer-homepage">
       <Header
-        cartCount={isCartLoading ? '...' : cartError ? '!' : cartCount}
-        username={username || 'Guest'}
-        onCategoryClick={handleCategoryClick}
+        cartCount={isCartLoading ? '...' : cartError ? 'Error' : cartCount}
+        username={username}
       />
+      <nav className="navigation">
+        <CategoryNavigation onCategoryClick={handleCategoryClick} />
+      </nav>
       <main className="main-content">
-        {isProductsLoading ? (
-          <div className="loading-state">Loading products...</div>
-        ) : (
-          <ProductList products={products} onAddToCart={handleAddToCart} />
-        )}
+        <ProductList products={products} onAddToCart={handleAddToCart} />
       </main>
       <Footer />
     </div>

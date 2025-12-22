@@ -1,7 +1,7 @@
 import React from 'react';
-import CartIcon from './CartIcon';
+import { CartIcon } from './CartIcon';
 import { ProfileDropdown } from './ProfileDropdown';
-import '../assets/styles.css';
+import './assets/styles.css';
 import Logo from './Logo';
 
 export function Header({ cartCount, username }) {

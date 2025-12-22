@@ -1,6 +1,6 @@
 // Footer.jsx
 import React from 'react';
-import '../assets/styles.css';
+import './assets/styles.css';
 
 export function Footer() {
   return (

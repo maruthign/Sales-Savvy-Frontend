@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import useravatar from './useravatar.png';
-import '../assets/styles.css';
+import './assets/styles.css';
 export function ProfileDropdown({ username }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate hook

@@ -12,74 +12,84 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
 
+    if (!username.trim() || !password.trim()) {
+      setError("Username and password are required");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         credentials: "include",
         body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
-      }
-
-      if (data.role === "CUSTOMER") {
-        navigate("/customerhome");
-      } else if (data.role === "ADMIN") {
-        navigate("/adminhome");
+      if (response.ok) {
+        if (data.role === "CUSTOMER") {
+          navigate("/customerhome");
+        } else if (data.role === "ADMIN") {
+          navigate("/adminhome");
+        } else {
+          navigate("/"); // Redirect to a default page if role is unknown
+        }
+      } else {
+        const errorMessage =
+          data.error || "Something went wrong. Please try again.";
+        throw new Error(errorMessage);
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Unexpected error occurred");
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-brand">
-        <div className="brand-box">
-          <h1>MyApp</h1>
-          <p>Welcome back! Please sign in.</p>
-        </div>
-      </div>
-
-      <div className="auth-form-section">
-        <div className="auth-card">
-          <div className="auth-header">
-            <h2>Login</h2>
-            <p>Enter your credentials</p>
-          </div>
-
-          {error && <div className="status-msg error">{error}</div>}
-
-          <form onSubmit={handleSignIn}>
-            <div className="input-group">
-              <label>Username</label>
+    <div className="page-layout">
+      <div className="page-container">
+        <div className="form-container">
+          <h1 className="form-title">Login</h1>
+          {error && <p className="error-message">{error}</p>}
+          <form onSubmit={handleSignIn} className="form-content">
+            <div className="form-group">
+              <label htmlFor="username" className="form-label">
+                Username
+              </label>
               <input
+                id="username"
                 type="text"
+                placeholder="Enter your username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                className="form-input"
               />
             </div>
-
-            <div className="input-group">
-              <label>Password</label>
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">
+                Password
+              </label>
               <input
+                id="password"
                 type="password"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="form-input"
               />
             </div>
-
-            <button className="auth-btn">Sign In</button>
+            <button type="submit" className="form-button">
+              Sign In
+            </button>
           </form>
-
-          <div className="auth-footer">
-            New user? <a href="/register">Create account</a>
+          <div className="form-footer">
+            <a href="/register" className="form-link">
+              New User? Sign up here
+            </a>
           </div>
         </div>
       </div>
