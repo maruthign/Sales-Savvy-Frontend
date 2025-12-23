@@ -2,9 +2,16 @@
 import React from 'react';
 import './assets/styles.css';
 
-export function CategoryNavigation({ onCategoryClick }) {
+export function CategoryNavigation({ onCategoryClick, activeCategory }) {
   // Static categories list
-  const categories = ['Shirts', 'Pants', 'Accessories', 'Mobiles', 'Mobile Accessories'];
+  // Map display labels to actual database values
+  const categories = [
+    { label: 'Men', value: 'Men' },
+    { label: 'Women', value: 'Women' },
+    { label: 'Home Appliances', value: 'Home Appliances' },
+    { label: 'Electronics', value: 'Electronics' },
+    { label: 'Accessories', value: 'Accessories' }
+  ];
 
   return (
     <nav className="category-navigation">
@@ -12,10 +19,10 @@ export function CategoryNavigation({ onCategoryClick }) {
         {categories.map((category, index) => (
           <li
             key={index}
-            className="category-item"
-            onClick={() => onCategoryClick(category)} // Trigger the click handler on category click
+            className={`category-item ${activeCategory === category.value ? 'active' : ''}`}
+            onClick={() => onCategoryClick(category.value)}
           >
-            {category}
+            {category.label}
           </li>
         ))}
       </ul>

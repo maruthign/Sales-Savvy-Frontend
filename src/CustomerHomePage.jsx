@@ -9,30 +9,30 @@ export default function CustomerHomePage() {
   const [products, setProducts] = useState([]);
   const [cartCount, setCartCount] = useState(0);
   const [username, setUsername] = useState('');
-  const [cartError, setCartError] = useState(false); // State for cart fetch error
-  const [isCartLoading, setIsCartLoading] = useState(true); // State for cart loading
-
+  const [cartError, setCartError] = useState(false);
+  const [isCartLoading, setIsCartLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState('Men');
 
   useEffect(() => {
     fetchProducts();
     if (username) {
-      fetchCartCount(); // Fetch cart count only if username is available
+      fetchCartCount();
     }
-  }, [username]); // Re-run cart count fetch if username changes
+  }, [username]);
 
   const fetchProducts = async (category = '') => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/products${category ? `?category=${category}` : '?category=Shirts'}`,
-        { credentials: 'include' } // Include authToken as a cookie
+        `http://localhost:8080/api/products${category ? `?category=${category}` : '?category=Men'
+        }`,
+        { credentials: 'include' }
       );
       const data = await response.json();
       if (data) {
-        setUsername(data.user?.name || 'Guest'); // Extract username
+        setUsername(data.user?.name || 'Guest');
         setProducts(data.products || []);
       } else {
         setProducts([]);
-
       }
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -41,23 +41,25 @@ export default function CustomerHomePage() {
   };
 
   const fetchCartCount = async () => {
-    setIsCartLoading(true); // Set loading state
+    setIsCartLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/cart/items/count?username=${username}`, {
-        credentials: 'include', // Include authToken as a cookie
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/cart/items/count?username=${username}`,
+        { credentials: 'include' }
+      );
       const count = await response.json();
       setCartCount(count);
-      setCartError(false); // Reset error state if successful
+      setCartError(false);
     } catch (error) {
       console.error('Error fetching cart count:', error);
-      setCartError(true); // Set error state
+      setCartError(true);
     } finally {
-      setIsCartLoading(false); // Remove loading state
+      setIsCartLoading(false);
     }
   };
 
   const handleCategoryClick = (category) => {
+    setActiveCategory(category);
     fetchProducts(category);
   };
 
@@ -70,13 +72,12 @@ export default function CustomerHomePage() {
       const response = await fetch('http://localhost:8080/api/cart/add', {
         credentials: 'include',
         method: 'POST',
-        body: JSON.stringify({ username, productId }), // Include username and productId in the request
+        body: JSON.stringify({ username, productId }),
         headers: { 'Content-Type': 'application/json' },
-        // Include authToken as a cookie
       });
 
       if (response.ok) {
-        fetchCartCount(); // Update cart count
+        fetchCartCount();
       } else {
         console.error('Failed to add product to cart');
       }
@@ -92,7 +93,10 @@ export default function CustomerHomePage() {
         username={username}
       />
       <nav className="navigation">
-        <CategoryNavigation onCategoryClick={handleCategoryClick} />
+        <CategoryNavigation
+          onCategoryClick={handleCategoryClick}
+          activeCategory={activeCategory}
+        />
       </nav>
       <main className="main-content">
         <ProductList products={products} onAddToCart={handleAddToCart} />

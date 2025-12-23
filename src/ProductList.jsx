@@ -1,4 +1,3 @@
-
 import React from 'react';
 import './assets/styles.css';
 
@@ -18,19 +17,26 @@ export function ProductList({ products, onAddToCart }) {
               className="product-image"
               loading="lazy"
               onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/150'; // Fallback image
+                e.target.src = 'https://via.placeholder.com/150';
               }}
             />
             <div className="product-info">
               <h3 className="product-name">{product.name}</h3>
               <p className="product-description">{product.description}</p>
               <p className="product-price">₹{product.price}</p>
-              <button
-                className="add-to-cart-btn"
-                onClick={() => onAddToCart(product.product_id)}
-              >
-                Add to Cart
-              </button>
+
+              {/* Check if stock is explicitly 0. If property is undefined, assume available. */}
+              {(product.stock_quantity !== undefined && product.stock_quantity === 0) ||
+                (product.stock !== undefined && product.stock === 0) ? (
+                <span className="out-of-stock">Not Available</span>
+              ) : (
+                <button
+                  className="add-to-cart-btn"
+                  onClick={() => onAddToCart(product.product_id)}
+                >
+                  Add to Cart
+                </button>
+              )}
             </div>
           </div>
         ))}

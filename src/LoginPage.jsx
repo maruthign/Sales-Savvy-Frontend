@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./assets/styles.css";
+import "./assets/Auth.css"; // Import the new modern auth styles
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -48,49 +48,52 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="page-layout">
-      <div className="page-container">
-        <div className="form-container">
-          <h1 className="form-title">Login</h1>
-          {error && <p className="error-message">{error}</p>}
-          <form onSubmit={handleSignIn} className="form-content">
-            <div className="form-group">
-              <label htmlFor="username" className="form-label">
-                Username
-              </label>
-              <input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className="form-input"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="form-input"
-              />
-            </div>
-            <button type="submit" className="form-button">
-              Sign In
-            </button>
-          </form>
-          <div className="form-footer">
-            <a href="/register" className="form-link">
-              New User? Sign up here
-            </a>
+    <div className="auth-body">
+      <div className="auth-container">
+        <h1 className="auth-title">Welcome Back</h1>
+        <p className="auth-subtitle">Please enter your details to sign in.</p>
+
+        {error && <div className="auth-error">{error}</div>}
+
+        <form onSubmit={handleSignIn} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="username" className="form-label">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="form-input"
+            />
           </div>
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="form-input"
+            />
+          </div>
+          <button type="submit" className="auth-button">
+            Sign In
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          <p>
+            Don't have an account?
+            <a href="/register" className="auth-link"> Sign up</a>
+          </p>
         </div>
       </div>
     </div>
