@@ -1008,3 +1008,42 @@ span.username {
     margin: 0;
   }
 }
+
+/* Warning background for flicker button */
+.add-to-cart-btn.warning-bg {
+  background-color: #f59e0b !important; /* Amber/Orange */
+  color: #fff;
+}
+
+/* Inline Quantity Controls */
+.quantity-controls-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.qty-btn {
+  background-color: #1976D2; color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.qty-btn:hover {
+  background-color: #115293;
+}
+
+.qty-display {
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
