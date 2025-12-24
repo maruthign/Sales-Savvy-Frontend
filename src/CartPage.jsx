@@ -191,7 +191,16 @@ const CartPage = () => {
 
   const totalProducts = () => cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const shipping = (5.0 * 74).toFixed(2); // Hardcoded shipping value
+  /* Shipping Logic:
+     - 5% of subtotal if subtotal <= 5000
+     - Free if subtotal > 5000
+  */
+  const subtotalValue = parseFloat(subtotal) || 0;
+  let shippingCost = 0;
+  if (subtotalValue > 0 && subtotalValue <= 5000) {
+    shippingCost = subtotalValue * 0.05;
+  }
+  const shipping = shippingCost.toFixed(2);
 
   if (cartItems.length === 0) {
     return (
