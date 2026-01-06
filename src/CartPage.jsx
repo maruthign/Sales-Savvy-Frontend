@@ -11,6 +11,8 @@ const CartPage = () => {
   const [subtotal, setSubtotal] = useState(0);
   const navigate = useNavigate(); // To redirect users after successful payment
 
+  const [stockMap, setStockMap] = useState({});
+
   // Fetch cart items on component load
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -36,7 +38,28 @@ const CartPage = () => {
     };
 
     fetchCartItems();
+    fetchStock();
   }, []);
+
+  // Fetch products to get stock information
+  const fetchStock = async () => {
+    try {
+      // Fetching all products to Build stock map
+      // Assuming api/products returns a list of products
+      const response = await fetch("http://localhost:8080/api/products", {
+        credentials: "include"
+      });
+      const data = await response.json();
+      const products = data.products || [];
+      const map = {};
+      products.forEach(p => {
+        map[p.product_id] = p.stock_quantity !== undefined ? p.stock_quantity : (p.stock || 0);
+      });
+      setStockMap(map);
+    } catch (error) {
+      console.error("Error fetching stock info:", error);
+    }
+  };
 
   // Calculate subtotal whenever cart items change
   useEffect(() => {
@@ -70,6 +93,24 @@ const CartPage = () => {
         handleRemoveItem(productId);
         return;
       }
+
+      // Check stock limit using stockMap or item property if available
+      const item = cartItems.find((i) => i.product_id === productId);
+      if (item) {
+        // Prioritize stockMap, then item.stock_quantity
+        let stock = stockMap[productId];
+        if (stock === undefined) {
+          stock = item.stock_quantity !== undefined ? item.stock_quantity : (item.stock || 0);
+        }
+
+        // If we have valid stock info (and it's not unlimited/undefined logic), check it
+        // If stock is found and > 0, restrict
+        if (stock !== undefined && stock > 0 && newQuantity > stock) {
+          alert(`Stock limit exceeded! Only ${stock} items available.`);
+          return;
+        }
+      }
+
       const response = await fetch("http://localhost:8080/api/cart/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -243,7 +284,21 @@ const CartPage = () => {
                         -
                       </button>
                       <span className="quantity-display">{item.quantity}</span>
-                      <button onClick={() => handleQuantityChange(item.product_id, item.quantity + 1)}>
+                      <button
+                        onClick={() => handleQuantityChange(item.product_id, item.quantity + 1)}
+                        disabled={(() => {
+                          const stock = stockMap[item.product_id] !== undefined ? stockMap[item.product_id] : (item.stock_quantity || item.stock || 0);
+                          return stock > 0 && item.quantity >= stock;
+                        })()}
+                        style={(() => {
+                          const stock = stockMap[item.product_id] !== undefined ? stockMap[item.product_id] : (item.stock_quantity || item.stock || 0);
+                          const disabled = stock > 0 && item.quantity >= stock;
+                          return {
+                            opacity: disabled ? 0.5 : 1,
+                            cursor: disabled ? 'not-allowed' : 'pointer'
+                          };
+                        })()}
+                      >
                         +
                       </button>
                     </div>
@@ -261,22 +316,44 @@ const CartPage = () => {
         <div className="checkout-section">
           <h2>Order Summary</h2>
           <div className="checkout-summary">
-            <div className="summary-row">
-              <span>Subtotal</span>
-              <span>₹{subtotal}</span>
-            </div>
-            <div className="summary-row">
-              <span>Shipping</span>
-              <span>₹{shipping}</span>
-            </div>
-            <div className="summary-row">
-              <span>Total Products</span>
-              <span>{totalProducts()}</span>
-            </div>
-            <div className="summary-row total">
-              <span>Total</span>
-              <span>₹{(parseFloat(subtotal) + parseFloat(shipping)).toFixed(2)}</span>
-            </div>
+            {(() => {
+              const inclusiveTotal = parseFloat(subtotal) || 0;
+              const baseTotal = inclusiveTotal / 1.18;
+              const totalTax = inclusiveTotal - baseTotal;
+              const cgst = totalTax / 2;
+              const sgst = totalTax / 2;
+              const shippingCost = parseFloat(shipping) || 0;
+              const finalTotal = inclusiveTotal + shippingCost;
+
+              return (
+                <>
+                  <div className="summary-row">
+                    <span>Subtotal (Base Price)</span>
+                    <span>₹{baseTotal.toFixed(2)}</span>
+                  </div>
+                  <div className="summary-row">
+                    <span>SGST (9%)</span>
+                    <span>₹{sgst.toFixed(2)}</span>
+                  </div>
+                  <div className="summary-row">
+                    <span>CGST (9%)</span>
+                    <span>₹{cgst.toFixed(2)}</span>
+                  </div>
+                  <div className="summary-row">
+                    <span>Shipping</span>
+                    <span>₹{shipping}</span>
+                  </div>
+                  <div className="summary-row">
+                    <span>Total Products</span>
+                    <span>{totalProducts()}</span>
+                  </div>
+                  <div className="summary-row total">
+                    <span>Total</span>
+                    <span>₹{finalTotal.toFixed(2)}</span>
+                  </div>
+                </>
+              );
+            })()}
             <button className="checkout-button" onClick={handleCheckout}>
               Proceed to Checkout
             </button>

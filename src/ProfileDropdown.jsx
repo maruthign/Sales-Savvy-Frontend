@@ -11,19 +11,17 @@ export function ProfileDropdown({ username }) {
   };
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/logout', {
-        method: 'POST', // Use POST as logout often involves session clearing
-        credentials: 'include', // Include credentials like cookies for authentication
+      // Attempt to notify backend of logout
+      await fetch('http://localhost:8080/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
       });
-
-      if (response.ok) {
-        console.log('User successfully logged out');
-        navigate('/'); // Redirect to login page
-      } else {
-        console.error('Failed to log out');
-      }
     } catch (error) {
       console.error('Error during logout:', error);
+    } finally {
+      // Always redirect to login page, regardless of backend success/failure
+      console.log('User logged out (client-side)');
+      navigate('/');
     }
   };
   const handleOrdersClick = () => {
